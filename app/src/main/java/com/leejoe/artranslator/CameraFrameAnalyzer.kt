@@ -307,16 +307,16 @@ class CameraFrameAnalyzer(
 
             val ids =
                 selected.joinToString(",") {
-                    "#\${it.id}"
+                    "#${it.id}"
                 }
 
             onStatus(
-                "Vision LLM: \$ids -> " +
+                "Vision LLM: $ids -> " +
                     configProvider().model
             )
 
             onLlmReset(
-                "SEND \$ids | " +
+                "SEND $ids | " +
                     "reasoning=off | max=96"
             )
 
@@ -369,10 +369,10 @@ class CameraFrameAnalyzer(
 
                     onStatus(
                         "Translated " +
-                            "\${result.translations.size} " +
+                            "${result.translations.size} " +
                             "region(s); " +
                             "reasoning tokens=" +
-                            "\${result.reasoningTokens}"
+                            "${result.reasoningTokens}"
                     )
 
                     publishOverlay(

@@ -313,7 +313,7 @@ class MainActivity :
                     saveConfig()
 
                     status(
-                        "Using \${config.model} @ " +
+                        "Using ${config.model} @ " +
                             config
                                 .nativeChatEndpoint()
                     )

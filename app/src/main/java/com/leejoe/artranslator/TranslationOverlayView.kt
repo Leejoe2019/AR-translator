@@ -164,11 +164,11 @@ class TranslationOverlayView @JvmOverloads constructor(
 
             val label = when {
                 region.translation.isNotBlank() ->
-                    "#\${region.id} OK"
+                    "#${region.id} OK"
                 region.inFlight ->
-                    "#\${region.id} LLM"
+                    "#${region.id} LLM"
                 else ->
-                    "#\${region.id}"
+                    "#${region.id}"
             }
 
             canvas.drawText(

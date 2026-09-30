@@ -44,7 +44,7 @@ class VisionApiClient {
                 .put("type", "text")
                 .put(
                     "content",
-                    "Translate the following tracked image regions to \${config.targetLanguage}. " +
+                    "Translate the following tracked image regions to ${config.targetLanguage}. " +
                         "Return exactly one line per image as: ID<TAB>translation."
                 )
         )
@@ -53,14 +53,14 @@ class VisionApiClient {
             input.put(
                 JSONObject()
                     .put("type", "text")
-                    .put("content", "ID=\${region.id}")
+                    .put("content", "ID=${region.id}")
             )
             input.put(
                 JSONObject()
                     .put("type", "image")
                     .put(
                         "data_url",
-                        "data:image/jpeg;base64,\${ImageUtils.jpegBase64(region.bitmap, 88)}"
+                        "data:image/jpeg;base64,${ImageUtils.jpegBase64(region.bitmap, 88)}"
                     )
             )
         }
@@ -88,12 +88,12 @@ class VisionApiClient {
             )
             .build()
 
-        onDebug("POST \${config.nativeChatEndpoint()} reasoning=off max_output_tokens=96")
+        onDebug("POST ${config.nativeChatEndpoint()} reasoning=off max_output_tokens=96")
 
         client.newCall(request).execute().use { response ->
             if (!response.isSuccessful) {
                 val raw = response.body?.string().orEmpty()
-                error("Vision API HTTP \${response.code}: \${raw.take(700)}")
+                error("Vision API HTTP ${response.code}: ${raw.take(700)}")
             }
 
             val source = response.body?.source() ?: error("Vision API returned empty body")
@@ -111,7 +111,7 @@ class VisionApiClient {
                 val event = try {
                     JSONObject(data)
                 } catch (_: Throwable) {
-                    onDebug("SSE parse skipped: \${data.take(180)}")
+                    onDebug("SSE parse skipped: ${data.take(180)}")
                     continue
                 }
 
@@ -120,14 +120,14 @@ class VisionApiClient {
                     "prompt_processing.progress" -> {
                         val pct = (event.optDouble("progress", 0.0) * 100.0).toInt()
                         if (pct == 25 || pct == 50 || pct == 75 || pct >= 99) {
-                            onDebug("LM Studio: prompt \${pct}%")
+                            onDebug("LM Studio: prompt ${pct}%")
                         }
                     }
                     "reasoning.start" ->
                         onDebug("WARNING: model started reasoning although reasoning=off")
                     "reasoning.delta" -> {
                         val chunk = event.optString("content", "")
-                        if (chunk.isNotEmpty()) onDebug("reasoning: \${chunk.take(120)}")
+                        if (chunk.isNotEmpty()) onDebug("reasoning: ${chunk.take(120)}")
                     }
                     "message.delta" -> {
                         val chunk = event.optString("content", "")
@@ -138,7 +138,7 @@ class VisionApiClient {
                     }
                     "error" -> {
                         val err = event.optJSONObject("error")
-                        error("LM Studio stream error: \${err?.optString("message") ?: data}")
+                        error("LM Studio stream error: ${err?.optString("message") ?: data}")
                     }
                     "chat.end" -> {
                         val result = event.optJSONObject("result")
@@ -147,8 +147,8 @@ class VisionApiClient {
                             stats?.optInt("reasoning_output_tokens", 0) ?: 0
                         finalMessageFromEnd = extractNativeMessage(result)
                         onDebug(
-                            "LM Studio done: output=\${stats?.optInt("total_output_tokens", -1)} " +
-                                "reasoning=\$reasoningTokens"
+                            "LM Studio done: output=${stats?.optInt("total_output_tokens", -1)} " +
+                                "reasoning=$reasoningTokens"
                         )
                     }
                 }
@@ -162,7 +162,7 @@ class VisionApiClient {
             }
 
             onDebug(
-                "FINAL: \${rawText.replace("\n", " / ").take(500)}"
+                "FINAL: ${rawText.replace("\n", " / ").take(500)}"
             )
 
             VisionResult(
